@@ -1,0 +1,23 @@
+{
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "projectSettings": {
+    "rootDirectory": "./",
+    "nodeVersion": "18.x"
+  },
+  "env": [
+    {
+      "key": "DATABASE_URL",
+      "description": "PostgreSQL connection string for Neon or similar provider",
+      "example": "postgresql://user:password@host:5432/database"
+    }
+  ],
+  "functions": {
+    "api/**": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+}

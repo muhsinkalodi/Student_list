@@ -1,7 +1,7 @@
 {
-  "name": "student",
-  "version": "1.0.0",
-  "description": "",
+  "name": "ramadan-data",
+  "version": "2.0.0",
+  "description": "Beautiful Ramadan Data Collection & Analytics Platform",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -12,13 +12,26 @@
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ramadan",
+    "data",
+    "collection",
+    "qmexai"
+  ],
+  "author": "qmexai",
   "license": "ISC",
   "dependencies": {
+    "jspdf": "^4.1.0",
+    "lucide-react": "^0.263.0",
     "next": "^14.0.0",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.18.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "pg": "^8.18.0"
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.3.0"
   }
 }
