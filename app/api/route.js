@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '../../lib/db';
+import { getSession } from '../../lib/auth';
 import { jsPDF } from 'jspdf';
 import 'jspdf/dist/jspdf.umd.min.js';
 
@@ -34,15 +35,15 @@ export async function GET(request) {
         sql += ' ORDER BY id DESC';
 
         const result = await query(sql, params);
-        
+
         if (download === 'pdf') {
             return generatePDF(result.rows, hostelType, rollNumber, year);
         }
-        
+
         if (download === 'csv') {
             return downloadCSV(result.rows);
         }
-        
+
         return NextResponse.json(result.rows);
     } catch (err) {
         return NextResponse.json({ error: err.message }, { status: 500 });
@@ -50,11 +51,16 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    const session = await getSession();
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         const { name, college_type, roll_number, state, hostel_type, year } = await request.json();
         const result = await query(
-            'INSERT INTO students(name, college_type, roll_number, state, hostel, year) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [name, college_type, roll_number, state, hostel_type || null, year || null]
+            'INSERT INTO students(name, college_type, roll_number, state, hostel, year, created_by_id, created_by_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+            [name, college_type, roll_number, state, hostel_type || null, year || null, session.id, session.name]
         );
         return NextResponse.json(result.rows[0], { status: 201 });
     } catch (err) {
@@ -63,11 +69,16 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
+    const session = await getSession();
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         const { id, name, college_type, roll_number, state, hostel_type, year } = await request.json();
         const result = await query(
-            'UPDATE students SET name=$1, college_type=$2, roll_number=$3, state=$4, hostel=$5, year=$6 WHERE id=$7 RETURNING *',
-            [name, college_type, roll_number, state, hostel_type || null, year || null, id]
+            'UPDATE students SET name=$1, college_type=$2, roll_number=$3, state=$4, hostel=$5, year=$6, updated_by_name=$7, updated_at=CURRENT_TIMESTAMP WHERE id=$8 RETURNING *',
+            [name, college_type, roll_number, state, hostel_type || null, year || null, session.name, id]
         );
         return NextResponse.json(result.rows[0]);
     } catch (err) {
@@ -76,6 +87,11 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
+    const session = await getSession();
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         const { id } = await request.json();
         await query('DELETE FROM students WHERE id=$1', [id]);
@@ -104,7 +120,7 @@ function generatePDF(data, hostelType, rollNumber, year) {
 
         // Filter info
         doc.setFontSize(10);
-        let filterText = hostelType || rollNumber || year 
+        let filterText = hostelType || rollNumber || year
             ? `Filters: ${[hostelType && `Hostel: ${hostelType}`, rollNumber && `Roll #: ${rollNumber}`, year && `Year: ${year}`].filter(Boolean).join(' | ')}`
             : 'All Students';
         doc.text(filterText, pageWidth / 2, yPos, { align: 'center' });
@@ -182,7 +198,7 @@ function generatePDF(data, hostelType, rollNumber, year) {
         doc.text('© 2026 qmexai - Ramadan Data Platform', pageWidth / 2, pageHeight - 5, { align: 'center' });
 
         const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
-        
+
         return new NextResponse(pdfBuffer, {
             status: 200,
             headers: {

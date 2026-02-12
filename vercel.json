@@ -3,10 +3,6 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "projectSettings": {
-    "rootDirectory": "./",
-    "nodeVersion": "18.x"
-  },
   "env": [
     {
       "key": "DATABASE_URL",

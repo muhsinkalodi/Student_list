@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       colors: {
         ramadan: {
-          50: '#fef3c7',
+          50: '#fffbeb',
           100: '#fef3c7',
           200: '#fde68a',
           300: '#fcd34d',
@@ -18,10 +18,24 @@ module.exports = {
           700: '#b45309',
           800: '#92400e',
           900: '#78350f',
+          950: '#451a03',
         },
+        gold: {
+          50: '#fbf7eb',
+          100: '#f5ebd1',
+          200: '#ebd5a3',
+          300: '#e0bb70',
+          400: '#d6a345',
+          500: '#cc8e26',
+          600: '#ae701e',
+          700: '#8c531b',
+          800: '#73431b',
+          900: '#60391a',
+        }
       },
       fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
       },
       boxShadow: {
         golden: '0 10px 30px rgba(217, 119, 6, 0.15)',
